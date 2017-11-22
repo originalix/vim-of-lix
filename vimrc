@@ -35,7 +35,7 @@ Plugin 'othree/html5.vim'
 " Emmet 插件
 Plugin 'mattn/emmet-vim'
 "代码补全
-Bundle 'Shougo/neocomplcache'
+Plugin 'Shougo/neocomplcache'
 "代码段自动生成
 Plugin 'SirVer/ultisnips'
 " 代码块合集
@@ -257,3 +257,6 @@ source $VIMRUNTIME/menu.vim
 language messages zh_CN.utf-8
 "设置为双字宽显示，否则无法完整显示如:☆
 set ambiwidth=double
+"设置光标高亮，并显示坐标
+highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
