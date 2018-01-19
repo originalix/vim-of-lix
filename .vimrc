@@ -150,7 +150,7 @@ let g:syntastic_check_on_open=0
 let g:syntastic_check_on_wq=1
 
 " Vim-airline 配置
-let g:airline_theme="molokai" 
+let g:airline_theme="gruvbox" 
 
 "这个是安装字体后 必须设置此项" 
 let g:airline_powerline_fonts = 1   
