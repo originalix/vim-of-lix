@@ -46,6 +46,8 @@ Plugin 'terryma/vim-multiple-cursors'
 Plugin 'tpope/vim-commentary'
 " CSS语法高亮
 Plugin 'hail2u/vim-css3-syntax'
+" CSS颜色预览插件
+Plugin 'ap/vim-css-color'
 " 自动补全后大括号
 Plugin 'jiangmiao/auto-pairs'
 " JavaScript语法高亮
@@ -83,6 +85,7 @@ filetype plugin indent on    " required
 autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 "CtrlP 配置
 "设置ctrlp的快捷方式 ctrp
@@ -257,3 +260,7 @@ source $VIMRUNTIME/menu.vim
 language messages zh_CN.utf-8
 "设置为双字宽显示，否则无法完整显示如:☆
 set ambiwidth=double
+"设置光标高亮，并显示坐标
+highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+colorscheme gruvbox
