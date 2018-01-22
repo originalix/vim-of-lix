@@ -35,9 +35,11 @@ Plugin 'othree/html5.vim'
 " Emmet 插件
 Plugin 'mattn/emmet-vim'
 "代码补全
-Bundle 'Shougo/neocomplcache'
+Plugin 'Shougo/neocomplcache'
 "代码段自动生成
 Plugin 'SirVer/ultisnips'
+" jedi-vim
+Plugin 'davidhalter/jedi-vim'
 " 代码块合集
 Plugin 'honza/vim-snippets'
 " 多重光标选取插件
@@ -64,6 +66,10 @@ Plugin 'airblade/vim-gitgutter'
 " AirLine 插件
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+" 自动缩进插件
+Plugin 'vim-scripts/indentpython.vim'
+" PEP8代码风格检查
+Plugin 'nvie/vim-flake8'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -150,7 +156,7 @@ let g:syntastic_check_on_open=0
 let g:syntastic_check_on_wq=1
 
 " Vim-airline 配置
-let g:airline_theme="gruvbox" 
+let g:airline_theme="molokai" 
 
 "这个是安装字体后 必须设置此项" 
 let g:airline_powerline_fonts = 1   
@@ -177,6 +183,15 @@ let g:airline_powerline_fonts = 1
   let g:airline_right_alt_sep = '⮃'
   let g:airline_symbols.branch = '⭠'
   let g:airline_symbols.readonly = '⭤'
+
+" 分割布局 Split layouts设置
+set splitbelow
+set splitright
+"split navigations
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
 
 " ------------------常规配置----------------------
 " Configuration file for vim
@@ -264,3 +279,27 @@ set ambiwidth=double
 highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 colorscheme gruvbox
+
+" 针对Python的配置
+au BufNewFile,BufRead *.py
+\ set tabstop=4|
+\ set softtabstop=4|
+\ set shiftwidth=4|
+\ set textwidth=79|
+\ set expandtab|
+\ set autoindent|
+\ set fileformat=unix
+
+" 针对HTML CSS JS的配置
+au BufNewFile,BufRead *.js, *.html, *.css
+\ set tabstop=4|
+\ set softtabstop=4|
+\ set shiftwidth=4
+
+" 标示不必要的空白字符
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match Error /\s\+$/
+" python代码高亮
+let python_highlight_all=1
+" 系统剪贴板
+set clipboard=unnamed
+
