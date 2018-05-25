@@ -35,7 +35,7 @@ Plugin 'othree/html5.vim'
 " Emmet 插件
 Plugin 'mattn/emmet-vim'
 "代码补全
-Plugin 'Shougo/neocomplcache'
+" Plugin 'Shougo/neocomplcache'
 "代码段自动生成
 Plugin 'SirVer/ultisnips'
 " jedi-vim
@@ -46,6 +46,10 @@ Plugin 'honza/vim-snippets'
 Plugin 'terryma/vim-multiple-cursors'
 " vim-commentary 注释
 Plugin 'tpope/vim-commentary'
+" Html 自动闭合html标签
+Plugin 'alvan/vim-closetag'
+" 自动匹配html标签
+Plugin 'Valloric/MatchTagAlways'
 " CSS语法高亮
 Plugin 'hail2u/vim-css3-syntax'
 " CSS颜色预览插件
@@ -54,6 +58,8 @@ Plugin 'ap/vim-css-color'
 Plugin 'jiangmiao/auto-pairs'
 " JavaScript语法高亮
 Plugin 'pangloss/vim-javascript'
+Plugin 'othree/yajs.vim'
+Plugin 'othree/javascript-libraries-syntax.vim'
 " 明显显示javascript缩进
 Plugin 'nathanaelkane/vim-indent-guides'
 " 代码风格检查
@@ -70,6 +76,13 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'vim-scripts/indentpython.vim'
 " PEP8代码风格检查
 Plugin 'nvie/vim-flake8'
+" 微信小程序插件
+Plugin 'chemzqm/wxapp.vim'
+" 代码补全 Youcompleteme
+Plugin 'Valloric/YouCompleteMe'
+" javascript 补全
+Plugin 'marijnh/tern_for_vim'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -254,7 +267,7 @@ set ruler
 set cursorline
 
 "自动缩进
-set noautoindent
+set autoindent
 set cindent
 set smartindent
 
@@ -267,6 +280,16 @@ set expandtab
 set softtabstop=4
 "Tab键插入四个空格,仅PHP
 autocmd FileType php set shiftwidth=4 tabstop=4 expandtab softtabstop=4
+" 不同的文件显示不同的缩进
+autocmd Filetype html setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype ruby setlocal ts=2 sw=2 expandtab
+autocmd Filetype javascript setlocal ts=2 sw=2 sts=0 noexpandtab
+autocmd Filetype coffeescript setlocal ts=4 sw=4 sts=0 noexpandtab
+autocmd Filetype css setlocal ts=2 sw=2 sts=0 noexpandtab
+autocmd Filetype wxml setlocal ts=2 sw=2 sts=0 noexpandtab
+autocmd Filetype wxss setlocal ts=2 sw=2 sts=0 noexpandtab
+autocmd Filetype vue setlocal ts=2 sw=2 sts=0 noexpandtab
+autocmd Filetype wxss setlocal ts=2 sw=2 sts=0 noexpandtab
 
 "解决菜单乱码
 source $VIMRUNTIME/delmenu.vim
@@ -291,10 +314,13 @@ au BufNewFile,BufRead *.py
 \ set fileformat=unix
 
 " 针对HTML CSS JS的配置
-au BufNewFile,BufRead *.js, *.html, *.css
-\ set tabstop=4|
-\ set softtabstop=4|
-\ set shiftwidth=4
+" au BufNewFile,BufRead *.js, *.html, *.css
+" \ set tabstop=2
+" \ | set softtabstop=w
+" \ | set shiftwidth=w
+
+au BufNewFile,BufRead *.html, *.css, *.js
+    \ set tabstop=2 softtabstop=2 shiftwidth=2
 
 " 标示不必要的空白字符
 au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match Error /\s\+$/
@@ -302,4 +328,89 @@ au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match Error /\s\+$/
 let python_highlight_all=1
 " 系统剪贴板
 set clipboard=unnamed
+
+" emmet-vim的微信小程序配置
+let g:user_emmet_settings = {
+\ 'wxss': {
+\   'extends': 'css',
+\ },
+\ 'wxml': {
+\   'extends': 'html',
+\   'aliases': {
+\     'div': 'view',
+\     'span': 'text',
+\   },
+\  'default_attributes': {
+\     'block': [{'wx:for-items': '{{list}}','wx:for-item': '{{item}}'}],
+\     'navigator': [{'url': '', 'redirect': 'false'}],
+\     'scroll-view': [{'bindscroll': ''}],
+\     'swiper': [{'autoplay': 'false', 'current': '0'}],
+\     'icon': [{'type': 'success', 'size': '23'}],
+\     'progress': [{'precent': '0'}],
+\     'button': [{'size': 'default'}],
+\     'checkbox-group': [{'bindchange': ''}],
+\     'checkbox': [{'value': '', 'checked': ''}],
+\     'form': [{'bindsubmit': ''}],
+\     'input': [{'type': 'text'}],
+\     'label': [{'for': ''}],
+\     'picker': [{'bindchange': ''}],
+\     'radio-group': [{'bindchange': ''}],
+\     'radio': [{'checked': ''}],
+\     'switch': [{'checked': ''}],
+\     'slider': [{'value': ''}],
+\     'action-sheet': [{'bindchange': ''}],
+\     'modal': [{'title': ''}],
+\     'loading': [{'bindchange': ''}],
+\     'toast': [{'duration': '1500'}],
+\     'audio': [{'src': ''}],
+\     'video': [{'src': ''}],
+\     'image': [{'src': '', 'mode': 'scaleToFill'}],
+\   }
+\ },
+\}
+
+" YouComplete Me 配置
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+" 不显示开启vim时检查ycm_extra_conf文件的信息  
+let g:ycm_confirm_extra_conf=0
+" 开启基于tag的补全，可以在这之后添加需要的标签路径  
+let g:ycm_collect_identifiers_from_tags_files=1
+"注释和字符串中的文字也会被收入补全
+let g:ycm_collect_identifiers_from_comments_and_strings = 0
+" 输入第2个字符开始补全
+let g:ycm_min_num_of_chars_for_completion=2
+" 禁止缓存匹配项,每次都重新生成匹配项
+let g:ycm_cache_omnifunc=0
+" 开启语义补全
+let g:ycm_seed_identifiers_with_syntax=1	
+"在注释输入中也能补全
+let g:ycm_complete_in_comments = 1
+"在字符串输入中也能补全
+let g:ycm_complete_in_strings = 1
+" 触发语义补全
+let g:ycm_key_invoke_completion = '<c-z>'
+" 屏蔽函数原型浏览窗口
+set completeopt=menu,menuone
+let g:ycm_add_preview_to_completeopt = 0
+" 关闭语义诊断信息
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_semantic_triggers =  {
+    \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+	\ 'cs,lua,javascript': ['re!\w{2}'],
+    \ 'css,scss': [ 're!^\s{2,4}', 're!:\s+' ],
+    \ }
+" 在以下几种格式文件上屏蔽ycm
+let g:ycm_filetype_blacklist = {
+    \ 'tagbar' : 1,
+    \ 'nerdtree' : 1,
+    \ 'qf' : 1,
+    \ 'notes' : 1,
+    \ 'markdown' : 1,
+    \ 'unite' : 1,
+    \ 'text' : 1,
+    \ 'vimwiki' : 1,
+    \ 'pandoc' : 1,
+    \ 'infolog' : 1,
+    \ 'mail' : 1
+    \}
 
