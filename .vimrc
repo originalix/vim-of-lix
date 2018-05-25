@@ -302,6 +302,7 @@ set ambiwidth=double
 highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 colorscheme gruvbox
+set background=dark
 
 " 针对Python的配置
 au BufNewFile,BufRead *.py
