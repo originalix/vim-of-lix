@@ -82,7 +82,16 @@ Plugin 'chemzqm/wxapp.vim'
 Plugin 'Valloric/YouCompleteMe'
 " javascript 补全
 Plugin 'marijnh/tern_for_vim'
-
+" taglist
+Plugin 'vim-scripts/taglist.vim'
+" 注释插件
+Plugin 'scrooloose/nerdcommenter'
+" 自动选择主题插件
+Plugin 'xolox/vim-colorscheme-switcher'
+Plugin 'xolox/vim-misc'
+" 主题配色
+Plugin 'dracula/vim'
+Plugin 'rafi/awesome-vim-colorschemes'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -100,11 +109,15 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 " Vundle配置结束
 
+" mapLeader
+let mapleader = ','
+let g:mapleader = ","
+
 " NERDTree 配置
 autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 "CtrlP 配置
 "设置ctrlp的快捷方式 ctrp
@@ -302,7 +315,6 @@ set ambiwidth=double
 highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 colorscheme gruvbox
-set background=dark
 
 " 针对Python的配置
 au BufNewFile,BufRead *.py
@@ -414,4 +426,40 @@ let g:ycm_filetype_blacklist = {
     \ 'infolog' : 1,
     \ 'mail' : 1
     \}
+" 跳转到函数定义处
+nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" 设置vim启动后自动打开taglist
+let Tlist_Auto_Open = 1
+" 让taglist窗口出现在Vim的右边
+let Tlist_Use_Right_Window = 1
+" 当同时显示多个文件中的tag时，设置为1，可使taglist只显示当前文件tag，其它文件的tag都被折叠起来。
+let Tlist_File_Fold_Auto_Close = 1
+" 只显示一个文件中的tag，默认为显示多个
+let Tlist_Show_One_File = 1
+" Tag的排序规则，以名字排序。默认是以在文件中出现的顺序排序
+let Tlist_Sort_Type ='name'
+" Taglist窗口打开时，立刻切换为有焦点状态
+let Tlist_GainFocus_On_ToggleOpen = 1
+" 如果taglist窗口是最后一个窗口，则退出vim
+let Tlist_Exit_OnlyWindow = 1
+" 设置窗体宽度为32，可以根据自己喜好设置
+let Tlist_WinWidth = 32
+" 这里比较重要了，设置ctags的位置，不是指向MacOS自带的那个，而是我们用homebrew安装的那个
+let Tlist_Ctags_Cmd='/usr/local/bin/ctags'
+" 热键设置，我设置成Leader+t来呼出和关闭Taglist
+map t :TlistToggle<CR>
+
+" NerdTreeCommenter 插件配置
+" 在注释行后添加一个空格
+let g:NERDSpaceDelims = 1
+" 使用紧凑型语法来美化多行注释
+let g:NERDCompactSexyComs = 1
+" 添加自定义格式注释
+let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+
+" 随机选择颜色
+nnoremap <leader>rdc :RandomColorScheme<CR>
 
