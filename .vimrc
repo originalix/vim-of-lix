@@ -92,6 +92,7 @@ Plugin 'xolox/vim-misc'
 " 主题配色
 Plugin 'dracula/vim'
 Plugin 'rafi/awesome-vim-colorschemes'
+" Markdown 相关 语法高亮
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -314,7 +315,7 @@ set ambiwidth=double
 "设置光标高亮，并显示坐标
 highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
-colorscheme gruvbox
+colorscheme desert
 
 " 针对Python的配置
 au BufNewFile,BufRead *.py
