@@ -463,4 +463,5 @@ let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
 
 " 随机选择颜色
 nnoremap <leader>rdc :RandomColorScheme<CR>
+autocmd VimEnter * :RandomColorScheme
 
