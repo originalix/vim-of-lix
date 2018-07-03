@@ -38,7 +38,7 @@
 
 [[layers]]
   name = "colorscheme"
-  random-theme = true
+  random-theme = false
 
 [[layers]]
   name = "lang#javascript"
@@ -51,7 +51,11 @@
 [[layers]]
   name = "lang#json"
 
-[[custom_plugins]]
-  name = 'jiangmiao/auto-pairs'
-  merged = 0
+# [[custom_plugins]]
+  # name = 'jiangmiao/auto-pairs'
+  # merged = 0
+#
+# [[custom_plugins]]
+  # name = 'maksimr/vim-jsbeautify'
+  # merged = 0
 
