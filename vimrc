@@ -1,11 +1,24 @@
 " Vim-Plug 插件列表
 call plug#begin()
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
 " FZF 搜索
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+
 " Lint 工具
 Plug 'dense-analysis/ale'
+Plug 'editorconfig/editorconfig-vim'
+
+" TagBar
+Plug 'majutsushi/tagbar'
+
+" 多光标操作
+Plug 'terryma/vim-multiple-cursors'
+
+" Git 工具
+Plug 'airblade/vim-gitgutter'
 
 " 代码提示
 if has('nvim')
@@ -23,6 +36,9 @@ Plug 'honza/vim-snippets'
 " 自动补全括号
 Plug 'jiangmiao/auto-pairs'
 
+" 注释插件
+Plug 'scrooloose/nerdcommenter'
+
 " JS 支持
 Plug 'othree/yajs.vim'
 Plug 'pangloss/vim-javascript'
@@ -30,16 +46,19 @@ Plug 'mxw/vim-jsx'
 Plug 'herringtondarkholme/yats.vim'
 " HTML 支持
 Plug 'othree/html5.vim'
+Plug 'mattn/emmet-vim'
+" Vue 语法支持
+Plug 'posva/vim-vue'
 " JSX 高亮
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'yuezk/vim-js'
 " JSX 格式化
 Plug 'maxmellon/vim-jsx-pretty'
 " LSP 支持
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'bash install.sh',
+"     \ }
 
 " 主题插件
 Plug 'mhartington/oceanic-next'
@@ -56,6 +75,32 @@ let NERDTreeShowHidden=0
 " 打开文件后，退出 NERDTree
 let NERDTreeQuitOnOpen=0
 map  <Leader>n  :NERDTreeFind<CR>
+" 显示行号
+let NERDTreeShowLineNumbers=0
+let NERDTreeAutoCenter=1
+" 在终端启动vim时，共享NERDTree
+let g:nerdtree_tabs_open_on_console_startup=1
+" 忽略一下文件的显示
+let NERDTreeIgnore=['\.pyc','\~$','\.swp']
+" 显示书签列表
+let NERDTreeShowBookmarks=0
+" FZF 打开后，不占用 NERDTree 窗口
+au BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree' && winnr('$') > 1 | b# | exe "normal! \<c-w>\<c-w>" | :blast | endif
+
+" 不显示忽略的 git 信息
+let g:NERDTreeShowIgnoredStatus = 1
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
 
 " ALE Lint 插件配置
 let g:ale_sign_error = '✗'
@@ -75,7 +120,13 @@ let g:ale_fixers = {
   \    'html': ['prettier'],
   \    'reason': ['refmt']
 \}
+let g:ale_fixers.javascript = [
+  \ 'eslint',
+  \ 'remove_trailing_lines',
+\]
+
 let g:ale_fix_on_save = 1
+let g:ale_linters_explicit = 1
 
 " 自动补全配置
 let g:deoplete#enable_at_startup = 1
@@ -86,19 +137,19 @@ call deoplete#custom#source('LanguageClient',
   \ 'min_pattern_length',
   \ 2)
 " 字符串中不补全
-call deoplete#custom#source('_',
-  \ 'disabled_syntaxes', ['String']
-  \)
+" call deoplete#custom#source('_',
+"   \ 'disabled_syntaxes', ['String']
+"   \)
 " 补全结束或离开插入模式时，关闭预览窗口
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 " 为每个语言定义completion source
 " 是的vim script和zsh script都有，这就是deoplete
-call deoplete#custom#option('sources', {
-  \ 'cpp': ['LanguageClient'],
-  \ 'c': ['LanguageClient'],
-  \ 'vim': ['vim'],
-  \ 'zsh': ['zsh']
-\})
+"call deoplete#custom#option('sources', {
+"\ 'cpp': ['LanguageClient'],
+"\ 'c': ['LanguageClient'],
+"\ 'vim': ['vim'],
+"\ 'zsh': ['zsh']
+"\})
 " 忽略一些没意思的completion source。
 let g:deoplete#ignore_sources = {}
 let g:deoplete#ignore_sources._ = ['buffer', 'around']
@@ -111,6 +162,7 @@ let g:jsx_pragma_required = 1
 " FORMATTERS
 au FileType javascript setlocal formatprg=prettier
 au FileType javascript.jsx setlocal formatprg=prettier
+au FileType vue setlocal formatprg=prettier
 au FileType typescript setlocal formatprg=prettier\ --parser\ typescript
 au FileType html setlocal formatprg=js-beautify\ --type\ html
 au FileType scss setlocal formatprg=prettier\ --parser\ css
@@ -118,20 +170,26 @@ au FileType css setlocal formatprg=prettier\ --parser\ css
 au FileType less setlocal formatprg=prettier\ --parser\ css
 
 "LSP 支持
-set hidden
-" 为语言指定Language server和server的参数
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
-    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-    \ 'python': ['/usr/local/bin/pyls'],
-    \ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
-    \ }
-
-nnoremap <leader>l :call LanguageClient_contextMenu()<CR>
-nnoremap K :call LanguageClient#textDocument_hover()<CR>
-nnoremap gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <leader>r :call LanguageClient#textDocument_rename()<CR>
+"set hidden
+"" 为语言指定Language server和server的参数
+"let g:LanguageClient_serverCommands = {
+"    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+"    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+"    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+"    \ 'python': ['/usr/local/bin/pyls'],
+"    \ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
+"    \ }
+"
+"nnoremap <leader>l :call LanguageClient_contextMenu()<CR>
+"nnoremap K :call LanguageClient#textDocument_hover()<CR>
+"nnoremap gd :call LanguageClient#textDocument_definition()<CR>
+"nnoremap <leader>r :call LanguageClient#textDocument_rename()<CR>
+"
+" TagBar 配置
+"将开启tagbar的快捷键设置为　<Leader>tb
+nmap <leader>tb :TagbarToggle<CR>
+" 设置ctags所在路径
+let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'  
 
 " ------------------常规配置----------------------
 " Configuration file for vim
@@ -202,24 +260,25 @@ set smartindent
 set shiftwidth=2
 set tabstop=2
 
-"使用4个空格代替Tab
+"使用2个空格代替Tab
 set expandtab
-set softtabstop=2
+
 "Tab键插入四个空格,仅PHP
 autocmd FileType php set shiftwidth=4 tabstop=4 expandtab softtabstop=4
 " 不同的文件显示不同的缩进
 autocmd Filetype html setlocal ts=2 sw=2 sts=0 expandtab
 autocmd Filetype ruby setlocal ts=2 sw=2 expandtab
-autocmd Filetype javascript setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype coffeescript setlocal ts=4 sw=4 sts=0 noexpandtab
-autocmd Filetype vue setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype jsx setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype css setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype scss setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype less setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype wxml setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype wxss setlocal ts=2 sw=2 sts=0 noexpandtab
-autocmd Filetype wxss setlocal ts=2 sw=2 sts=0 noexpandtab
+autocmd Filetype javascript setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype coffeescript setlocal ts=4 sw=4 sts=0 expandtab
+autocmd Filetype vue setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype jsx setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype css setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype scss setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype less setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype wxml setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype wxss setlocal ts=2 sw=2 sts=0 expandtab
+autocmd Filetype wxss setlocal ts=2 sw=2 sts=0 expandtab
+autocmd FileType vue syntax sync fromstart
 
 "解决菜单乱码
 source $VIMRUNTIME/delmenu.vim
@@ -237,3 +296,4 @@ if (has("termguicolors"))
 endif
 
 colorscheme OceanicNext
+
